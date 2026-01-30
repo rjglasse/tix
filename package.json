@@ -1,0 +1,77 @@
+{
+  "name": "tix",
+  "displayName": "Tix",
+  "description": "Fast and simple text-based todo lists",
+  "version": "0.0.1",
+  "publisher": "tix",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rjglasse/tix"
+  },
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:tix"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "tix",
+        "extensions": [
+          ".tix"
+        ],
+        "aliases": [
+          "Tix",
+          "tix"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "tix.markDone",
+        "title": "Tix: Mark Item Done"
+      },
+      {
+        "command": "tix.sortByContext",
+        "title": "Tix: Sort by Context"
+      },
+      {
+        "command": "tix.archive",
+        "title": "Tix: Archive Done Items"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "tix.markDone",
+        "key": "alt+d",
+        "when": "editorTextFocus && editorLangId == tix"
+      },
+      {
+        "command": "tix.sortByContext",
+        "key": "alt+s",
+        "when": "editorTextFocus && editorLangId == tix"
+      }
+    ],
+    "configurationDefaults": {
+      "[tix]": {
+        "editor.lineNumbers": "off"
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  }
+}

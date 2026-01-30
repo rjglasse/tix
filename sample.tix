@@ -1,0 +1,20 @@
+Work:
+api - add rate limiting to endpoints
+api - write integration tests
+ui - fix dark mode toggle
+ui - update onboarding flow
+docs - update API reference
+deploy - configure staging environment
+
+Side Project:
+design - create logo variants
+dev - set up CI pipeline
+dev - add user authentication
+
+Done:
+api - implement user endpoints
+ui - redesign settings page
+
+
+
+
