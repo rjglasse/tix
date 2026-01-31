@@ -3,14 +3,22 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const CONTEXT_COLORS = [
+  '#F48771', // coral red
   '#4EC9B0', // teal
-  '#CE9178', // orange
-  '#C586C0', // purple
-  '#9CDCFE', // light blue
   '#DCDCAA', // yellow
-  '#4FC1FF', // cyan
+  '#C586C0', // purple
+  '#6BCB6B', // green
+  '#CE9178', // orange
+  '#9CDCFE', // light blue
   '#D16969', // red
-  '#B5CEA8', // green
+  '#4FC1FF', // cyan
+  '#E8AB6D', // peach
+  '#B5CEA8', // sage green
+  '#DA70D6', // orchid
+  '#87CEEB', // sky blue
+  '#F0E68C', // khaki
+  '#FF6B9D', // pink
+  '#20B2AA', // light sea green
 ];
 
 let decorationTypes: Map<string, vscode.TextEditorDecorationType> = new Map();
@@ -57,7 +65,7 @@ function updateDecorations(editor: vscode.TextEditor) {
   const contextRanges: Map<string, vscode.Range[]> = new Map();
   const projectRanges: vscode.Range[] = [];
   const doneItemRanges: vscode.Range[] = [];
-  const contextPattern = /^(\s*)([^\s-]+)\s*-\s*/;
+  const contextPattern = /^(\s*)(.+?)\s+-\s/;
   let inDoneSection = false;
 
   for (let i = 0; i < editor.document.lineCount; i++) {
@@ -115,7 +123,7 @@ class TixCompletionProvider implements vscode.CompletionItemProvider {
 
     // Collect all existing contexts
     const contexts = new Set<string>();
-    const contextPattern = /^([^\s-]+)\s*-\s*/;
+    const contextPattern = /^(.+?)\s+-\s/;
 
     for (let i = 0; i < document.lineCount; i++) {
       const match = document.lineAt(i).text.match(contextPattern);
@@ -261,7 +269,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const document = editor.document;
-    const contextPattern = /^([^\s-]+)\s*-\s*/;
+    const contextPattern = /^(.+?)\s+-\s/;
 
     // Parse document into projects
     interface Project {
