@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { exec } from 'child_process';
 
 const CONTEXT_COLORS = [
   '#F48771', // coral red
@@ -23,6 +24,12 @@ const CONTEXT_COLORS = [
 
 let decorationTypes: Map<string, vscode.TextEditorDecorationType> = new Map();
 let contextColorMap: Map<string, number> = new Map();
+
+function playDingSound() {
+  if (process.platform === 'darwin') {
+    exec('afplay /System/Library/Sounds/Glass.aiff');
+  }
+}
 
 const projectDecorationType = vscode.window.createTextEditorDecorationType({
   fontWeight: 'bold',
@@ -256,6 +263,10 @@ export function activate(context: vscode.ExtensionContext) {
         const endPosition = lastLine.range.end;
         editBuilder.insert(endPosition, '\n\nDone:\n' + lineText + '\n');
       }
+    }).then(success => {
+      if (success) {
+        playDingSound();
+      }
     });
   });
 
@@ -413,6 +424,72 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(archiveCommand);
+
+  // Register the generate next actions command
+  const generateNextCommand = vscode.commands.registerCommand('tix.generateNext', async () => {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      vscode.window.showErrorMessage('No active editor');
+      return;
+    }
+
+    const currentFilePath = editor.document.uri.fsPath;
+    const dirPath = path.dirname(currentFilePath);
+    const nextFilePath = path.join(dirPath, 'next.tix');
+
+    // Find all .tix files in the directory
+    const files = fs.readdirSync(dirPath).filter(f =>
+      f.endsWith('.tix') && f !== 'next.tix'
+    );
+
+    const nextItems: string[] = [];
+
+    for (const file of files) {
+      const filePath = path.join(dirPath, file);
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const lines = content.split('\n');
+
+      // Find Inbox section and get first item
+      let inInbox = false;
+      for (const line of lines) {
+        const trimmed = line.trim();
+
+        if (trimmed === 'Inbox:') {
+          inInbox = true;
+          continue;
+        }
+
+        // Check if we've hit another project header
+        if (inInbox && trimmed.endsWith(':') && trimmed.length > 1) {
+          break;
+        }
+
+        // Get first non-empty item in Inbox
+        if (inInbox && trimmed.length > 0) {
+          const fileName = file.replace('.tix', '');
+          nextItems.push(`${fileName} - ${trimmed}`);
+          break;
+        }
+      }
+    }
+
+    if (nextItems.length === 0) {
+      vscode.window.showInformationMessage('No Inbox items found in any .tix files');
+      return;
+    }
+
+    // Write to next.tix
+    const nextContent = 'Next:\n' + nextItems.join('\n') + '\n';
+    fs.writeFileSync(nextFilePath, nextContent);
+
+    // Open the next.tix file
+    const doc = await vscode.workspace.openTextDocument(nextFilePath);
+    await vscode.window.showTextDocument(doc);
+
+    vscode.window.showInformationMessage(`Generated ${nextItems.length} next actions`);
+  });
+
+  context.subscriptions.push(generateNextCommand);
 }
 
 export function deactivate() {

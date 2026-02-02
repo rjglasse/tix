@@ -44,6 +44,10 @@
       {
         "command": "tix.archive",
         "title": "Tix: Archive Done Items"
+      },
+      {
+        "command": "tix.generateNext",
+        "title": "Tix: Generate Next Actions"
       }
     ],
     "keybindings": [
@@ -55,6 +59,11 @@
       {
         "command": "tix.sortByContext",
         "key": "alt+s",
+        "when": "editorTextFocus && editorLangId == tix"
+      },
+      {
+        "command": "tix.generateNext",
+        "key": "alt+a",
         "when": "editorTextFocus && editorLangId == tix"
       }
     ],
