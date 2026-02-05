@@ -2,3 +2,12 @@ out/
 node_modules/
 *.vsix
 .vscode-test/
+
+# Claude Code - ignore most local state
+.claude/
+# But track custom skills (optional - uncomment if you want to share)
+# !.claude/skills/
+# !.claude/settings.json
+
+# macOS
+.DS_Store
